@@ -49,11 +49,12 @@ RCT_EXPORT_METHOD(merge:(NSArray *)fileNames
     {
         
         AVAsset *asset = [AVAsset assetWithURL:[NSURL fileURLWithPath:object]];
+        AVAssetTrack *videoAssetTrack = [[asset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
         
-        CMTimeRange timeRange = CMTimeRangeMake(kCMTimeZero, asset.duration);
+        CMTimeRange timeRange = CMTimeRangeMake(kCMTimeZero, videoAssetTrack.timeRange.duration);
         
         [videoTrack insertTimeRange:timeRange
-                            ofTrack:[[asset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0]
+                            ofTrack:videoAssetTrack
                              atTime:insertTime
                               error:nil];
         
@@ -62,7 +63,7 @@ RCT_EXPORT_METHOD(merge:(NSArray *)fileNames
                              atTime:insertTime
                               error:nil];
         
-        insertTime = CMTimeAdd(insertTime,asset.duration);
+        insertTime = CMTimeAdd(insertTime, videoAssetTrack.timeRange.duration);
         
         // Get the first track from the asset and its transform.
         NSArray* tracks = [asset tracks];
